@@ -7,7 +7,7 @@ The pipeline consists of 5 steps.
 1. In the first step, Lowpass Gaussian blur filter of kernel size 3 was applied to grayscale input image. This is a recommended step before applying Edge detection, due to its ability to remove small noises in the input image that could be considered as false edges.
 2. Canny edge detection was applied to the blurred image. Parameter values for low and high threshold were selected as 50 and 150, which is found in previous exercise and seems to work well.
 3. Select the ROI(Region of Interest) that approximately covers the ego lane of the car. Parameter values for ROI was also selected same as previous exercise and seems to work well with some tuning.
-4. Hough transform algorithm is applied to extract line segments. Parameters are selected mostly similar to previous exercise as those values seems to be working well: **threshold** of 15, meaning at least 15 points in image space need to be associated with each line segment, **in_line_length** of 40 pixels, and **max_line_gap** of 20 pixels. 
+4. Hough transform algorithm is applied to extract line segments. Parameters are selected mostly similar to previous exercise as those values seems to be working well: **threshold** of 15, meaning at least 15 points in image space need to be associated with each line segment, **in_line_length** of 40 pixels, and **max_line_gap** of 20 pixels.
 5. Finally, **draw_lines()** function is called for rendering the output image. Originally just a drawing function, later it was modified in order to display each of left and right lane as a single solid line. To accomplish that following steps were taken:
     1. Horizontal lines were removed. Lines whose slope value falls in [-0.5, 0.5] were removed from the list of lines.
     2. Remaining lines were separated to left and right lane segments by its slope sign
@@ -17,12 +17,12 @@ The pipeline consists of 5 steps.
 
 To try and see the result of changing parameter values easier, I made a plot of each step's output as shown in below image:
 
-![Each stage of Pipeline's output](assets/test_image.png)
+![Each stage of Pipeline's output](assets/pipeline_multi.png)
 
 
 ### 2. Shortcomings with the current pipeline
 
-There are many situations in which my current pipeline doesn't take account. 
+There are many situations in which my current pipeline doesn't take account.
  - Almost all of test cases were taken during car was driving in straight line, thus lane markers are located in constant ROI and easily observed. If a car turns, switches lane or enters intersection, it is highly unlikely to work correct.
  - If car is in traffic jam and there is an another car too close, it might block camera's vision to some extent.
  - Since this pipeline only uses RGB camera data, it is susceptible to harsh weather that reduces visiblity and low lightning conditions. Even humans have hard time finding lanes in these conditions.
