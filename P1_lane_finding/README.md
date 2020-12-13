@@ -5,4 +5,15 @@
 Overview
 ---
 
-<img src="assets/solidYellowRight.gif" width="480" alt="Combined Image" />
+<p align="center">
+  <img src="assets/challenge.gif" />
+</p>
+
+
+This project tries to solve lane finding problem of self driving car using classical rule based computer vision approaches. 
+Algorithm consists of following pipeline:
+
+<p align="center">
+  <img height="300" src="assets/block_diagram.png" />
+</p>
+
