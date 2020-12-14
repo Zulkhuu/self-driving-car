@@ -17,7 +17,9 @@ The pipeline consists of 5 steps.
 
 To try and see the result of changing parameter values easier, I made a plot of each step's output as shown in below image:
 
-![Each stage of Pipeline's output](assets/pipeline_multi.png)
+<p align="center">
+  <img height="250" src="assets/block_diagram.png" />
+</p>
 
 
 ### 2. Shortcomings with the current pipeline
