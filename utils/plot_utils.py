@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plt_imlist(images, fig_size=(20,10)):
+def plt_imlist(images, fig_size=(30,15)):
     plt.figure()
     plt.rcParams["figure.figsize"] = fig_size
     fig, axs = plt.subplots(1, len(images))

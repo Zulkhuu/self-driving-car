@@ -8,7 +8,7 @@ def hls_select(img, thresh=(0, 255)):
     binary_output[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 1
     return binary_output
 
-def pipeline(img, s_thresh=(170, 255), sx_thresh=(20, 100)):
+def pipeline(img, s_thresh=(110, 255), sx_thresh=(20, 100)):
     img = np.copy(img)
     # Convert to HLS color space and separate the V channel
     hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
@@ -31,4 +31,9 @@ def pipeline(img, s_thresh=(170, 255), sx_thresh=(20, 100)):
     ret = np.zeros_like(s_channel)
     ret[(s_binary == 1) | (sxbinary == 1)] = 1
 
-    return ret
+    # Add hue filtering
+    h_filtered = cv2.inRange(hls, (0, 0, 0), (40, 255, 255))
+    ret2 = np.zeros_like(s_channel)
+    ret2 = s_binary | ((h_filtered//255) & sxbinary)
+
+    return ret2
