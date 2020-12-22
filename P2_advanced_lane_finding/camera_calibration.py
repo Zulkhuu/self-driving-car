@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glob
 import time
-import yaml
+import pickle
 
 def read_calibration(filename):
     """Read camera intrinsics from yaml file
@@ -12,8 +12,8 @@ def read_calibration(filename):
     outputs:
         dict: dictionary holding camera internal parameters
     """
-    document = open(filename, 'r')
-    parsed = yaml.load(document, Loader=yaml.Loader)
+    with open(filename, 'rb') as handle:
+        parsed = pickle.load(handle)
     return parsed
 
 def undistort_image(img, k):
@@ -32,7 +32,7 @@ def undistort_image(img, k):
     dst = cv2.resize(dst, (k['image_width'], k['image_height']))
     return dst
 
-def calibrate_camera(img_folder="camera_cal", out_file = "intrinsics.yaml", debug=False):
+def calibrate_camera(img_folder="camera_cal", out_file = "intrinsics.p", debug=False):
     tile = 1
     bw = 9
     bh = 6
@@ -107,8 +107,8 @@ def calibrate_camera(img_folder="camera_cal", out_file = "intrinsics.yaml", debu
     d['image_height'] = h
     d['proj_error'] = tot_error/len(objpoints)
 
-    with open(out_file, "w") as f:
-        yaml.dump(d, f)
+    with open(out_file, "wb") as f:
+        pickle.dump(d, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     if debug is True:
         print("\nCalibration result:")
