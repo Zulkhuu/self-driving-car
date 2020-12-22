@@ -24,7 +24,7 @@ dst = np.int32([[w/5, h], [w*4/5, h],
 def calibrate_warp(out_file = "perspective.p", src=None, dst=None):
     if src is None or dst is None:
         # Hardcoded values
-        src = [[203, 720], [1116, 720], [696, 460], [585, 460]]
+        src = [[248, 720], [1089, 720], [706, 460], [592, 460]]
         dst = [[256, 720], [1024, 720], [1024, 0], [256, 0]]
 
     M = cv2.getPerspectiveTransform(np.array(src, dtype=np.float32),np.array(dst, dtype=np.float32))
@@ -38,3 +38,7 @@ def read_warp(filename):
     with open(filename, 'rb') as handle:
         parsed = pickle.load(handle)
     return parsed
+
+def warp_image(img, M):
+    img_size = (img.shape[1], img.shape[0])
+    return cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_LINEAR)
