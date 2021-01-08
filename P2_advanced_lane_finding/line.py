@@ -29,13 +29,18 @@ class Line():
         #y values for detected line pixels
         self.ally = None
 
-    def update(self, fit):
-        self.detected = True
-        self.current_fit = fit
-        if len(self.recent_xfitted) == self.buffer_size:
-            self.recent_xfitted = self.recent_xfitted[1:]
-        self.recent_xfitted.append(fit)
-        self.best_fit = np.average(np.array(self.recent_xfitted), axis=0)
+    def update(self, fit, allx, ally):
+        self.allx = allx
+        self.ally = ally
+        if min(len(self.allx), len(self.ally)) >=100:
+            self.detected = True
+            self.current_fit = fit
+            if len(self.recent_xfitted) == self.buffer_size:
+                self.recent_xfitted = self.recent_xfitted[1:]
+            self.recent_xfitted.append(fit)
+            self.best_fit = np.average(np.array(self.recent_xfitted), axis=0)
+        else:
+            self.detected = False
 
     def print(self):
         print(f"Recent {len(self.recent_xfitted)}:{self.recent_xfitted}")
