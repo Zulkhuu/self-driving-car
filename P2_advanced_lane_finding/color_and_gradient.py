@@ -2,6 +2,15 @@ import numpy as np
 import cv2
 
 def pipeline(img, s_thresh=(170, 255), sx_thresh=(20, 100)):
+    """Apply Color and Gradient thresholding pipeline
+    inputs:
+        img: RGB image as a 3 channel numpy array
+        s_thresh: Threshold Ranges for Saturation channel
+        sx_thresh: Threshold Ranges for Sobel X magnitude
+    outputs:
+        ret: one channel binary image
+    """
+
     # Convert to HLS color space and separate the S channel
     gray_img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
