@@ -1,18 +1,31 @@
-## Advanced Lane Finding
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
-![Lanes Image](./examples/example_output.jpg)
+# Advanced Lane Finding
+<!--[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+![Lanes Image](./examples/example_output.jpg)-->
 
-In this project, your goal is to write a software pipeline to identify the lane boundaries in a video, but the main output or product we want you to create is a detailed writeup of the project.  Check out the [writeup template](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup.  
+In this project, a software pipeline to identify the lane boundaries in a video is implemented. 
 
-Creating a great writeup:
----
-A great writeup should include the rubric points as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
+## Result 
 
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
+Track 1                       |  Track 2
+:----------------------------:|:------------------------------:
+[ <video src='project_video_output.mp4' width=600/> | <video src='challenge_video_output.mp4' width=600/>
 
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
+## Camera Calibration
 
-The Project
+Raw camera images are often distorted by barrel or pincushion distortion due to imperfection of the optical systems of the camera. However if we have precise knowledge of camera's image sensor parameters and lens parameters, we can find the error caused by the lens distortion and compensate it to find undistorted image. Process of finding image sensor and lens parameters is called camera calibration and it is integral part of every computer vision system.
+
+One of the most commonly used camera calibration algorithm is Zhang's method which uses printed pattern with known geometry. OpenCV uses Zhang's method in its `calibrateCamera()` function. It is used in [camera_calibration.py](camera_calibration/camera_calibration.py) file and it's result is saved to [camera_intrinsics.pkl](camera_calibration/camera_intrinsics.pkl). Using camera calibration result undistorting is tested in [camera_calibration.ipynb](camera_calibration/camera_calibration.ipynb)
+
+Raw distorted image           |  Undistorted image
+:----------------------------:|:------------------------------:
+[ ![](assets/distorted_img.png) | ![](assets/undistorted_img.png)
+
+
+## Pipeline 
+
+System has following steps
+
+###
 ---
 
 The goals / steps of this project are the following:
