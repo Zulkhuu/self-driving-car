@@ -118,7 +118,7 @@ def calibrate_camera(img_folder="images", out_file = "camera_intrinsics.pkl", cb
     d['proj_error'] = tot_error/len(objpoints)
 
     with open(out_file, "wb") as f:
-        pickle.dump(d, f, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(d, f, protocol = 4)
 
     if debug is True:
         print("\nCalibration result:")

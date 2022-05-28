@@ -12,7 +12,7 @@ def calibrate_warp(out_file = "perspective.p", src=None, dst=None):
     M = cv2.getPerspectiveTransform(np.array(src, dtype=np.float32),np.array(dst, dtype=np.float32))
 
     with open(out_file, "wb") as f:
-        pickle.dump(M, f, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(M, f, protocol=4)
 
     return M
 
