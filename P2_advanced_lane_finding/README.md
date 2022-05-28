@@ -6,14 +6,12 @@ In this project, a software pipeline to identify the lane boundaries in a video 
 
 ## Result 
 
-Project video                      |  Challenge video
-:----------------------------:|:------------------------------:
+<video controls width=600 autoplay loop muted="true" src="https://github.com/Zulkhuu/self-driving-car/blob/main/P2_advanced_lane_finding/project_video_output.mp4" type="video/mp4" >
+ Sorry, your browser doesn't support embedded videos.
+</video> 
 
-<video controls width=600 autoplay loop muted="true" src="project_video_output.mp4" type="video/mp4" >
- Sorry, your browser doesn't support embedded videos.
-</video> | <video controls width=600 autoplay loop muted="true" src="challenge_video_output.mp4" type="video/mp4" >
- Sorry, your browser doesn't support embedded videos.
-</video>
+https://github.com/Zulkhuu/self-driving-car/blob/main/P2_advanced_lane_finding/project_video_output.mp4
+
 ## Camera Calibration
 
 Raw camera images are often distorted by barrel or pincushion distortion due to imperfection of the optical systems of the camera. However if we have precise knowledge of camera's image sensor parameters and lens parameters, we can find the error caused by the lens distortion and compensate it to find undistorted image. Process of finding image sensor and lens parameters is called camera calibration and it is integral part of every computer vision system.
