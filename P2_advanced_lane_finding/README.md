@@ -4,13 +4,9 @@
 
 In this project, a software pipeline to identify the lane boundaries in a video is implemented. 
 
-## Result 
+## Result
 
-<video controls width=600 autoplay loop muted="true" src="https://github.com/Zulkhuu/self-driving-car/blob/main/P2_advanced_lane_finding/project_video_output.mp4" type="video/mp4" >
- Sorry, your browser doesn't support embedded videos.
-</video> 
-
-https://github.com/Zulkhuu/self-driving-car/blob/main/P2_advanced_lane_finding/project_video_output.mp4
+https://user-images.githubusercontent.com/16575832/170815195-2c5df3f8-74d8-4759-bb0f-d1ac77b8d1bd.mp4
 
 ## Camera Calibration
 
@@ -79,14 +75,9 @@ In the case of continously moving car, camera image doesn't change by much betwe
 ### Output video
 Current algorithm works well for project video as its content is mostly on road with clear markings and good weather condition.
 
-<!--video src='project_video_output.mp4' width=600/-->
-<video controls width="100%" autoplay loop muted="true" src="project_video_output.mp4" type="video/mp4" >
- Sorry, your browser doesn't support embedded videos.
-</video>
+https://user-images.githubusercontent.com/16575832/170815195-2c5df3f8-74d8-4759-bb0f-d1ac77b8d1bd.mp4
 
 In the harder challenge video, sometimes it fails to track the lanes. In this video, left part of the road has newly paved asphalt which has more darker color than the rest of the road. It results in edge detection output and confuses the lane pixel finding steps. Lane finding failed to keep track in this situation, however it was able to know its calculation was wrong and restart the lane finding to correct detection.
 
-<!--video src='challenge_video_output.mp4' width=600/-->
-<video controls width="100%" autoplay loop muted="true" src="challenge_video_output.mp4" type="video/mp4" >
- Sorry, your browser doesn't support embedded videos.
-</video>
+https://user-images.githubusercontent.com/16575832/170815222-3ed70feb-7dae-4aa0-8fa5-7ed079eee95c.mp4
+
