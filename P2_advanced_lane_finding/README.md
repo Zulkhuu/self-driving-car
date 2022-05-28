@@ -8,8 +8,12 @@ In this project, a software pipeline to identify the lane boundaries in a video 
 
 Project video                      |  Challenge video
 :----------------------------:|:------------------------------:
-<video src='project_video_output.mp4' width=600/> | <video src='challenge_video_output.mp4' width=600/>
 
+<video controls width=600 autoplay loop muted="true" src="project_video_output.mp4" type="video/mp4" >
+ Sorry, your browser doesn't support embedded videos.
+</video> | <video controls width=600 autoplay loop muted="true" src="challenge_video_output.mp4" type="video/mp4" >
+ Sorry, your browser doesn't support embedded videos.
+</video>
 ## Camera Calibration
 
 Raw camera images are often distorted by barrel or pincushion distortion due to imperfection of the optical systems of the camera. However if we have precise knowledge of camera's image sensor parameters and lens parameters, we can find the error caused by the lens distortion and compensate it to find undistorted image. Process of finding image sensor and lens parameters is called camera calibration and it is integral part of every computer vision system.
@@ -44,12 +48,12 @@ Functions to find warp parameters and applying it to image are written in [warp_
 
 ### Finding Lane Pixels
 
-After undistorting, thresholding and warping, output binary image should have mostly lane markings. But we still need to find out which pixels are part of the left and right line. Approach used here is same as the sliding window approach offered in Udacity's Advanced Computer Vision lesson. We first split the histogram of x coordinates of the binary image pixels to find initial location of the left and right lane. Then we set up sliding windows to iterate across the binary activations in the image. 
+After undistorting, thresholding and warping, output binary image should have mostly lane markings. But we still need to find out which pixels are part of the left and right line. Approach used here is same as the sliding window approach offered in Udacity's Advanced Computer Vision lesson. We first split the histogram of x coordinates of the binary image pixels to find initial location of the left and right lane. Then we set up sliding windows to iterate across the binary activations in the image. It is implemented in LaneFinder class in [lane_finding.ipynb](lane_finding.ipynb) file.
 
 ![](assets/sliding_window.png)
 
 ### Fit curve
-Once we found out which pixels belong to lanes, we use Numpy's polyfit() function to fit lane pixels to second order polynomial. Resulting parameters are then used for calculating lane curvature.
+Once we found out which pixels belong to lanes, we use Numpy's polyfit() function to fit lane pixels to second order polynomial. Resulting parameters are then used for calculating lane curvature. It is implemented in LaneFinder class in [lane_finding.ipynb](lane_finding.ipynb) file.
 
 ![](assets/fit_curve.png)
 
@@ -64,16 +68,27 @@ $$ {f}'(y) = \frac{dx}{dy} = 2Ay + B $$
 $$ {f}''(y) = \frac{d^2x}{dy^2} = 2A $$
 $$ R_{curve} = \frac{[1+(2Ay + B)^2]^{3/2}}{\left| 2A \right|} $$
 
+### Overlaying result
+To see if our lane finding is working correctly, we color the lane over original camera image using below steps:
+1) Fill the areas between left and right lane curves
+2) Convert the top view image back to camera perspective (By using inverse of the warp parameter)
+3) Blend with original image with lower alpha value(0.3)
+4) Write lane curvatures and width as a text on top right corner
 
 ### Handling continous video
-In the case of continously moving car, camera image doesn't change by much between frames. Hence curvature also shouldn't change by large amount between frames. We can use that to use as initial condition for finding next frame's lane pixels and sanity check our radius of curvature calculation. Calculation is assumed failed when ROC is radically different from previous frame, lane width is too wide or thin to be believed. Then sliding window based search is performed again.
+In the case of continously moving car, camera image doesn't change by much between frames. Hence curvature also shouldn't change by large amount between frames. We can use that to use as initial condition for finding next frame's lane pixels and sanity check our radius of curvature calculation. Calculation is assumed failed when ROC is radically different from previous frame, lane width is too wide or thin to be believed. Then sliding window based search is performed again. It is implemented in Line class in [lane_finding.ipynb](lane_finding.ipynb) file.
 
 ### Output video
 Current algorithm works well for project video as its content is mostly on road with clear markings and good weather condition.
 
-<video src='project_video_output.mp4' width=600/>
-
+<!--video src='project_video_output.mp4' width=600/-->
+<video controls width="100%" autoplay loop muted="true" src="project_video_output.mp4" type="video/mp4" >
+ Sorry, your browser doesn't support embedded videos.
+</video>
 
 In the harder challenge video, sometimes it fails to track the lanes. In this video, left part of the road has newly paved asphalt which has more darker color than the rest of the road. It results in edge detection output and confuses the lane pixel finding steps. Lane finding failed to keep track in this situation, however it was able to know its calculation was wrong and restart the lane finding to correct detection.
 
-<video src='challenge_video_output.mp4' width=600/>
+<!--video src='challenge_video_output.mp4' width=600/-->
+<video controls width="100%" autoplay loop muted="true" src="challenge_video_output.mp4" type="video/mp4" >
+ Sorry, your browser doesn't support embedded videos.
+</video>
