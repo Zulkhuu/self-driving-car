@@ -82,20 +82,12 @@ def calibrate_camera(img_folder="images", out_file = "camera_intrinsics.pkl", cb
             corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
             imgpoints.append(corners2)
 
-            # Draw and display the corners
-            if debug is True:
-                img = cv2.drawChessboardCorners(img, (bw,bh), corners2,ret)
-                cv2.imshow('img',img)
-                cv2.waitKey(500)
-
 
     if debug is True:
         print('objpoints:')
         print(objpoints)
         print('imgpoints:')
         print(imgpoints)
-
-    cv2.destroyAllWindows()
 
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
     newcameramtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
