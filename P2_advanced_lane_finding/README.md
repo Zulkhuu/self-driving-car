@@ -6,9 +6,9 @@ In this project, a software pipeline to identify the lane boundaries in a video 
 
 ## Result 
 
-Track 1                       |  Track 2
+Project video                      |  Challenge video
 :----------------------------:|:------------------------------:
-[<video src='project_video_output.mp4' width=600/> | <video src='challenge_video_output.mp4' width=600/>
+<video src='project_video_output.mp4' width=600/> | <video src='challenge_video_output.mp4' width=600/>
 
 ## Camera Calibration
 
@@ -53,4 +53,27 @@ Once we found out which pixels belong to lanes, we use Numpy's polyfit() functio
 
 ![](assets/fit_curve.png)
 
+### Calculate curvature
+The formula for the radius of curvature at any point $x$ for the curve $y = f(x)$ is given by: 
 
+$$R_{curve} = \frac{[1+(\frac{dy}{dx})^2]^{3/2}}{\left| \frac{d^2y}{dx^2} \right|} $$
+
+For second order polynomial(parabol), radius of the curvature becomes:
+$$ f(y) = Ay^2 + By + C $$
+$$ {f}'(y) = \frac{dx}{dy} = 2Ay + B $$
+$$ {f}''(y) = \frac{d^2x}{dy^2} = 2A $$
+$$ R_{curve} = \frac{[1+(2Ay + B)^2]^{3/2}}{\left| 2A \right|} $$
+
+
+### Handling continous video
+In the case of continously moving car, camera image doesn't change by much between frames. Hence curvature also shouldn't change by large amount between frames. We can use that to use as initial condition for finding next frame's lane pixels and sanity check our radius of curvature calculation. Calculation is assumed failed when ROC is radically different from previous frame, lane width is too wide or thin to be believed. Then sliding window based search is performed again.
+
+### Output video
+Current algorithm works well for project video as its content is mostly on road with clear markings and good weather condition.
+
+<video src='project_video_output.mp4' width=600/>
+
+
+In the harder challenge video, sometimes it fails to track the lanes. In this video, left part of the road has newly paved asphalt which has more darker color than the rest of the road. It results in edge detection output and confuses the lane pixel finding steps. Lane finding failed to keep track in this situation, however it was able to know its calculation was wrong and restart the lane finding to correct detection.
+
+<video src='challenge_video_output.mp4' width=600/>
