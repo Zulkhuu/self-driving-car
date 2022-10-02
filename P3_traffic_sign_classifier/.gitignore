@@ -1,0 +1,10 @@
+data
+dataset
+lesson
+.ipynb_checkpoints
+*.h5
+models
+*.swp
+*.p
+*checkpoint
+lenet.*
