@@ -1,27 +1,10 @@
-## Project: Build a Traffic Sign Recognition Program
+# Project: Build a Traffic Sign Recognition Program
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
 Overview
 ---
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to classify traffic signs. You will train and validate a model so it can classify traffic sign images using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset). After the model is trained, you will then try out your model on images of German traffic signs that you find on the web.
+In this project, we will build DNN inspired by LeNet to classify traffic sign images. After training model will be tested on some German traffic signs that is found on the web.
 
-We have included an Ipython notebook that contains further instructions 
-and starter code. Be sure to download the [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
-
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
-
-To meet specifications, the project will require submitting three files: 
-* the Ipython notebook with the code
-* the code exported as an html file
-* a writeup report either as a markdown or pdf file 
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/481/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
 
 The Project
 ---
@@ -33,26 +16,133 @@ The goals / steps of this project are the following:
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-### Dependencies
-This lab requires:
+## Dataset Exploration
 
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
+### Dataset Summary
 
-The lab environment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
+We use German Traffic Sign Dataset named [GTSDB](https://benchmark.ini.rub.de/gtsrb_dataset.html) which consists of:  
+ - Training set: 39209 images
+ - Testing set:  12630 images
+ - Number of classes: 43
 
-### Dataset and Repository
+Training set is further divided into train/validation split of 80/20:
+ - Training set:  31367 images
+ - Validation set: 7842 images
 
-1. Download the data set. The classroom has a link to the data set in the "Project Instructions" content. This is a pickled dataset in which we've already resized the images to 32x32. It contains a training, validation and test set.
-2. Clone the project, which contains the Ipython notebook and the writeup template.
-```sh
-git clone https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project
-cd CarND-Traffic-Sign-Classifier-Project
-jupyter notebook Traffic_Sign_Classifier.ipynb
-```
+Original dataset images had various image sizes. However it was resized and saved into pickle format for convenience.
+The pickled data is a dictionary with 4 key/value pairs:
 
-### Requirements for Submission
-Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+ - 'features' is a 4D array containing raw pixel data of the traffic sign images, (num examples, width, height, channels).
+ - 'labels' is a 1D array containing the label/class id of the traffic sign. The file signnames.csv contains id -> name mappings for each id.
+ - 'sizes' is a list containing tuples, (width, height) representing the original width and height the image.
+ - 'coords' is a list containing tuples, (x1, y1, x2, y2) representing coordinates of a bounding box around the sign in the image. THESE COORDINATES ASSUME THE ORIGINAL IMAGE. THE PICKLED DATA CONTAINS RESIZED VERSIONS (32 by 32) OF THESE IMAGES
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+ ### Exploratory Visualization
+
+Some of the dataset images with labels are shown below:
+
+![](assets/dataset_sample.png)
+
+Traffic sign dataset is imbalanced: Some classes have as little as ~200 data while other classes have almost 2000 sample images in the dataset.
+
+Histogram of the dataset is shown below:
+
+![](assets/dataset_hist.png)
+
+## Design and Test a Model Architecture
+
+### Preprocessing
+
+In contrast to MNIST dataset, Traffic Sign dataset has RGB images and it is easy to notice that color is important feature for classifying. 
+
+Thus images will not be converted to grayscale, instead our neural network input will have 3 channel.
+
+In the preprocessing step, dataset is:
+ - Converted to floating type
+ - Normailzed with Min-Max scaling to a range of [0.1, 0.9]
+
+### Model architecture:
+
+It has 3 Convolution layers (Depth of 6, 16 and 400 each):
+ - 5x5 kernel
+ - No stride
+ - RELU activation
+
+First 2 Convolution layers are followed by 2x2 Max-pooling layers.
+
+Followed by 3 Fully Connected layers (Depth of 120, 84 and 43 each):
+ - Dropout of 0.5
+ - RELU activation
+
+ Finally output class probability is calculated by Softmax layer.
+
+Model architecture shown in LeNET style:
+
+![](assets/model_arch.png)
+
+Model architecture shown in AlexNet style:
+
+![](assets/model_arch2.png)
+
+Above model architecture images were created by [NN-SVG](http://alexlenail.me/NN-SVG/LeNet.html) tool.
+
+### Model training:
+
+Model was trained with following hyper parameters:
+ - Loss function: Softmax Cross Entropy
+ - Optimizer: Adam
+ - Learning rate: 0.001
+ - Mini-batch size: 256
+ - Number of epoch: 20
+
+Loss curve is shown below:
+
+![](assets/loss_curve.png)
+
+Training and validation accuracy is shown below:
+
+![](assets/train_acc.png)
+
+Final accuracy:
+ - Training:   0.991
+ - Validation: 0.980
+ - Test:       0.937
+
+### Solution approach
+
+First, original LeNet model was tried with only input modified to read Traffic Sign dataset. However training result was not satisfactory. 
+Both training and validation set accuracy stopped increasing after ~20 epochs indicating possible underfitting and model too small/shallow. 
+Following steps were taken to solve underfitting issue:
+ - Use 3 layers of RGB image instead of grayscale like in LeNet and MNIST
+ - Add one more convolution layer with enough depth (400)
+
+Once underfitting issue was considered solved (Training accuracy keep increasing for more epochs), validation accuracy was not as high as training accuracy suggesting overfitting starting to appear. To prevent this, dropout of 0.5 probability was added to each of Fully Connected layers.
+
+## Test a Model on New Images
+
+### Acquiring New Images
+
+5 images German Traffic Sign images from Google search were cropped, resized and preprocessed to test on newly trained model. Images have different backgrounds and taken from various distance and angle. Images are placed in assets folder with names: german_sign#.png
+
+Traffic Sign images found from Google Search:
+
+![](assets/new_images.png)
+
+### Performance New Images & Model certainty
+
+Out of 5 new images, model was able to correctly classify 4 of them (80% accuracy).
+
+In the below image, first column displays input new images, for columns 2-6: Title says what was the predicted class and its probability.
+
+![](assets/top5.png)
+
+Second image was wrongly classified: 
+ - Correct class 30: Beware of ice/snow
+ - Top prediction(Probability: 0.98773) Class 11: Right-of-way at the next intersection
+ - 2nd prediction(Probability: 0.00662) Class 30: Beware of ice/snow
+ - 3rd prediction(Probability: 0.00250) Class 27: Pedestrians
+
+Although top prediciton was wrong(Right-of-way at the next intersection), Correct class had 2nd highest probability. But at this low resolution it seems hard to correctly classify even for humans. Top 4 predictions all had similar features: Triangle shape, White background, Red colored corner, Some black shape drawn in the center. 
+
+Rest of the 4 images were correctly classified. However similar shapes were in Top K predictions as shown in above figure. Both 1st and 3rd images(Keep right and Turn left ahead) were round shaped with blue background, white edges, some kind of white arrow shape in the center. In all cases, top predicions mostly included Traffic Signs which has same shape, background color, edge color and symbols. Based on this we can say model learned to look at correct features. 
 
