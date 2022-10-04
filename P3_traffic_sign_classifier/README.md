@@ -58,8 +58,16 @@ In contrast to MNIST dataset, Traffic Sign dataset has RGB images and it is easy
 Thus images will not be converted to grayscale, instead our neural network input will have 3 channel.
 
 In the preprocessing step, dataset is:
+ - Resized to fit input to Neural Network
  - Converted to floating type
  - Normailzed with Min-Max scaling to a range of [0.1, 0.9]
+ - Shuffled
+
+ To fit NN input data size and type, input image should be converted.
+
+ Min-Max scaling was used for numerical stability and to prevent vanishing gradient problem happening. As network becomes deeper, it becomes easy for calculated values to get either too large or too small in the forward propagtion and produce not much gradients in back propagation. One way to address this issue is to normalize input images with Min-Max scaling in the preprocessing(Used in LeNet, choice of activation layer and batch normalization also tackles vanishing gradient). 
+
+ Finally shuffling was also done during training to ensure that order of the data doesn't affect model's training.
 
 ### Model architecture:
 
