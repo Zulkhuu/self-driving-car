@@ -63,7 +63,7 @@ In the preprocessing step, dataset is:
  - Normailzed with Min-Max scaling to a range of [0.1, 0.9]
  - Shuffled
 
- To fit NN input data size and type, input image should be converted.
+ To fit Neural Network input data size and type, input image should be converted.
 
  Min-Max scaling was used for numerical stability and to prevent vanishing gradient problem happening. As network becomes deeper, it becomes easy for calculated values to get either too large or too small in the forward propagtion and produce not much gradients in back propagation. One way to address this issue is to normalize input images with Min-Max scaling in the preprocessing(Used in LeNet, choice of activation layer and batch normalization also tackles vanishing gradient). 
 
