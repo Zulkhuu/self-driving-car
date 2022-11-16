@@ -31,11 +31,12 @@ The goals / steps of this project are the following:
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
+* [README.md](README.md)(this file) for summarizing the results (based on writeup_template.md)
 * [model.py](model.py) containing the script to create and train the model
 * [drive.py](drive.py) for driving the car in autonomous mode
 * [model.h5](model.h5) containing a trained convolution neural network using Keras library
 * [video.mp4](video.mp4) A video recording of trained model driving the vehicle autonomously for one lap around the track.
-* [README.md](README.md)(this file) for summarizing the results (based on writeup_template.md)
+
 
 #### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
@@ -57,7 +58,7 @@ The model.py file contains the code for training and saving the convolution neur
 
   - Generator is then created for both training and validation set using [generator](https://github.com/Zulkhuu/self-driving-car/blob/f622667666cc74d08b757dcb82f386d70930864b/P4_behavorial_cloning/model.py#L79) function. Generators are used because of its memory efficiency. The Generator is initialized with full list of filenames and steering angle values only. Loading images and augmenting(Horizontal flip) is only done on current mini-batches.
 
-  - Next, Deep Neural Network Model is created using Keras library. Detailed info is next chapter.
+  - Next, Deep Neural Network Model is created using Keras library. Detailed info is in next chapter [Model Architecture and Training Strategy](#model-architecture-and-training-strategy).
 
   - Created model is then trained/validated using previously created generators.
 
@@ -81,7 +82,7 @@ In my model, there are few subtle differences from original model:
  - Dropout layer of 0.5 probability is inserted between fully connected layers in order to generalize/reduce overfitting.
 
 
-Full modified model architecture is explained in later [Final Model Architecture](#final-model-architecture) chapter
+Full modified model architecture is explained in later [Final Model Architecture](#2-final-model-architecture) chapter
 
 #### 2. Attempts to reduce overfitting in the model
 
