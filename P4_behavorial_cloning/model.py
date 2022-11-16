@@ -58,12 +58,11 @@ def read_data(dir_name, steering_correction = 0.2):
 def print_data_summary(samples, title):
     """Print summary data for samples
     """
-    print(f"{title}:")
-    print(f"   Total Frame#: {len(samples)}")
-    print(f"   Center Image: {samples[0][0]} Steering: {samples[0][1]}")
-    print(f"   Left Image:   {samples[1][0]} Steering: {samples[1][1]}")
-    print(f"   Right Image:  {samples[2][0]} Steering: {samples[2][1]}")
-
+    print("{}:".format(title))
+    print("   Total Frame#: {}".format(len(samples)))
+    print("   Center Image: " + samples[0][0] + " Steering:" + str(samples[0][1]))
+    print("   Left Image:   " + samples[1][0] + " Steering:" + str(samples[1][1]))
+    print("   Right Image:  " + samples[2][0] + " Steering:" + str(samples[2][1]))
 
 # Read recorded sample data
 center_samples = read_data('data/center_driving/')
@@ -73,7 +72,7 @@ hard_turn_samples = read_data('data/hard_turn/')
 print_data_summary(hard_turn_samples, "Hard turn data")
 
 total_samples = center_samples + hard_turn_samples
-print(f"\nTotal sample#: {len(total_samples)}")
+print("\nTotal sample#:" + str(len(total_samples)))
 
 
 def generator(samples, batch_size=32):
@@ -155,7 +154,9 @@ history_object = model.fit_generator(train_generator,
             validation_data=validation_generator, 
             validation_steps=np.ceil(len(validation_samples)/batch_size), 
             epochs=n_epoch, verbose=1)
-model.save(f"model_{n_epoch}epoch_{history_object.history['val_loss'][-1]:.4f}loss.h5")
+
+#model.save(f"model_{n_epoch}epoch_{history_object.history['val_loss'][-1]:.4f}loss.h5")
+model.save("model.h5")
 
 ### Plot the training and validation loss for each epoch
 plt.plot(history_object.history['loss'])
