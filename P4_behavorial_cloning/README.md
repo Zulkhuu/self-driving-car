@@ -34,7 +34,7 @@ Using the Udacity provided simulator and my drive.py file, the car can be driven
 python drive.py model.h5
 ```
 
-The model provided in [model.py](model.py) file, has [generator]](https://github.com/Zulkhuu/self-driving-car/blob/0e30a0e8ed70727150251fe63c518ef55494fd90/P4_behavorial_cloning/model.py#L79) function for creating generator for creating mini-batches. The function is initialized with list of image filenames and corresponding steering angle values from recorded data. Image files are loaded and augmented(Horizontal flip) only when next batch is called during training.
+The model provided in [model.py](model.py) file, has [generator](https://github.com/Zulkhuu/self-driving-car/blob/0e30a0e8ed70727150251fe63c518ef55494fd90/P4_behavorial_cloning/model.py#L79) function for creating generator for creating mini-batches. The function is initialized with list of image filenames and corresponding steering angle values from recorded data. Image files are loaded and augmented(Horizontal flip) only when next batch is called during training.
 
 #### 3. Submission code is usable and readable
 
