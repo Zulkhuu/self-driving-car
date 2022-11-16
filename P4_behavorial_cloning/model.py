@@ -111,24 +111,23 @@ def generator(samples, batch_size=32):
             yield sklearn.utils.shuffle(X_train, y_train)
 
 
-# Split data to training and validation set and create a generator for each
+# Split data to training and validation set 
 batch_size = 64
 valid_split = 0.2
 
 train_samples, validation_samples = train_test_split(total_samples, test_size=valid_split)
 
-# compile and train the model using the generator function
+# Create a generator for training and validation set
 train_generator = generator(train_samples, batch_size=batch_size)
 validation_generator = generator(validation_samples, batch_size=batch_size)
 
-# Sanity Check Generator
+# Sanity Check for Generator
 #xtrain_, ytrain_ = next(validation_generator)
 #print(xtrain_)
 
 
 # Build model based on Nvidia's End to End Learning for Self-Driving Cars
 # Paper URL: https://arxiv.org/abs/1604.07316
-
 model = Sequential()  
 model.add(Lambda(lambda X:(X/127.5)-1, input_shape=(160, 320, 3)))
 model.add(Cropping2D(cropping=( (70,25), (0,0) )))
@@ -146,8 +145,10 @@ model.add(Dropout(0.5))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(1))
 
+# Use Adam optimizer and Mean Square Error loss
 model.compile(optimizer='adam', loss='mse')
 
+# Train for n_epoch and save history object
 n_epoch = 10
 history_object = model.fit_generator(train_generator, 
             steps_per_epoch=np.ceil(len(train_samples)/batch_size), 
