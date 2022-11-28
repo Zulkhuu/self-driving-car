@@ -59,17 +59,17 @@ It can be also shown as block diagram in below image (Image taken from [wikipedi
 
 ![](assets/pid_block.png)
 
-#### Control parameters
+#### Parameters
 
  - Proportional or **P** term is directly proportional to error value. Higher the **P** gain, controller approaches set/target value faster, but it tends to overshoot target value and oscillates. In case of driving car in lane, overshooting results in driving in zig zag line. On th other hand, too low **P** value, results in slow reaction and car might not make a hard turn in time.
  - Differential or **D** term is directly proportional to the change in error value. Thus it prevents overshoot created by **P** control by dampening the overall system. While too small value might be not enough to cancel overshooting, too large value also decreases overall reaction speed of the system.  Combined with proportional control, **PD** control works very well in ideal case. 
- - Integral or **I** term is directly proportional to the sum of the error values. Thus it prevents any systematic bias in the system. In case of the driving car in the center of the lane, Steering drift in steering angle or slippery road surfaces can result in steady state error which **PD** controller cannot take care of. While too small **I** gain might be too slow to remove steady state error, large value can alos reduce system stability and result in overshoot.
+ - Integral or **I** term is directly proportional to the sum of the error values. Thus it prevents any systematic bias in the system. In case of the driving car in the center of the lane, Steering drift in steering angle or slippery road surfaces can result in steady state error which **PD** controller cannot take care of. While too small **I** gain might be too slow to remove steady state error, large value can also reduce system stability and result in overshoot.
 
 **P**, **PD** and **PID** controller's output plot from the class shown below is a good example for displaying each controller's behavior.
 
 ![](assets/pid_plot.png)
 
- ### Tuning parameters
+ ### Tuning
 
 First I tried **P** only control by setting **I** and **D** gains to zero. Result was zig zagging(overshooting) vehicle  as expected:
 
@@ -88,7 +88,7 @@ Table columns can be described in car's driving behavior as:
 
  By manually tuning, I found $K_p=0.2$ and $K_d=2.0$ to be good values. With these values, Car was able to finish a lap without leaving the drivable portion of the track. Recorded video of **PD** controller can be found in [pd_full_lap.mp4](assets/pd_full_lap.mp4) video file.
 
- The car was driving well, but it seemed like car is always driving little to the right and it had some difficulty in hard left turn after passing the bridge.
+ The car was driving well, but it seemed like car is driving little to the right and it had some difficulty in hard left turn after passing the bridge.
 
  Finally I tried full **PID** controller by setting $K_I=0.004$ value(same as in classroom). Adding **I** term seemed to improved the steady state error and overall stability of the driving a little bit. Recorded video of **PID** controller can be found in [pid_full_lap.mp4](assets/pid_full_lap.mp4) video file.
 
