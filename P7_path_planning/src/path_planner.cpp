@@ -4,7 +4,7 @@
 PathPlanner::PathPlanner() {
     lane = CENTER_LANE;
     lane_infos.resize(N_LANES);
-    ref_speed = 0.0; 
+    ref_vel = 0.0; 
     next_state_ = KEEP_LANE;
 }
 
@@ -44,7 +44,7 @@ void PathPlanner::UpdateLaneInfos(json sensor_fusion) {
         double vy = sensor_fusion[i][4]; 
         double check_speed = sqrt(vx*vx + vy*vy); 
         double check_car_s = sensor_fusion[i][5]; 
-        double check_distance = check_car_s-car_state_.s; 
+        double check_distance = check_car_s - car_state_.s; 
         
         int lane_id = GetLaneID(d);
         if(lane_id != -1){
@@ -70,10 +70,10 @@ void PathPlanner::UpdateLaneInfos(json sensor_fusion) {
         }
    
     }
-    for(auto& l : lane_infos) {
+    /*for(auto& l : lane_infos) {
         std::cout << l.car_in_front << " " << l.car_in_back << " " << l.is_free << " || ";
     }
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 }
 
 void PathPlanner::UpdateCarState(json j){
@@ -109,10 +109,7 @@ vector<vector<double>> PathPlanner::CalcAnchorPoints() {
     double prev_ref_x;
     double prev_ref_y;
 
-    int prev_size = car_state_.previous_path_x.size(); 
-    if(prev_size != 0) {
-        std::cout << car_state_.x << "," << car_state_.y << " " << car_state_.previous_path_x[0] << "," << car_state_.previous_path_x[1] << std::endl;
-    }
+    int prev_size = car_state_.previous_path_x.size();
     
     // First add 2 anchor points from the previous path's ending
     if(prev_size < 2) { 
@@ -155,10 +152,20 @@ vector<vector<double>> PathPlanner::CalcAnchorPoints() {
     ptsy.push_back(next_wp1[1]);
     ptsy.push_back(next_wp2[1]);
 
+    // Transform coordinates to ego car's local coordinate system
+    for(int i=0; i<ptsx.size(); i++) 
+    { 
+        double shift_x = ptsx[i] - car_state_.ref_x;
+        double shift_y = ptsy[i] - car_state_.ref_y; 
+
+        ptsx[i] = (shift_x * cos(0-car_state_.ref_yaw) - shift_y * sin(0-car_state_.ref_yaw));
+        ptsy[i] = (shift_x * sin(0-car_state_.ref_yaw) + shift_y * cos(0-car_state_.ref_yaw));
+    }
+
     return {ptsx, ptsy};
 }
 
-void PathPlanner::Update(json j) {
+void PathPlanner::UpdatePath(json j) {
     // Update current car state and lanes' traffic info
     UpdateCarState(j);
     UpdateLaneInfos(j["sensor_fusion"]);
@@ -166,8 +173,7 @@ void PathPlanner::Update(json j) {
     next_x_vals.clear();
     next_y_vals.clear();
 
-    // State transition logic
-    double target_speed;
+    double target_vel;
     bool too_close = lane_infos[lane].car_in_front && lane_infos[lane].front_car_distance < FRONT_CLEARANCE_DIST;
 
     bool left_lane_free = false;
@@ -180,86 +186,108 @@ void PathPlanner::Update(json j) {
         right_lane_free = lane_infos[lane+1].is_free;
     }
 
-    std::cout << lane << ": " << too_close << " " << left_lane_free << " " << right_lane_free << std::endl;
-
-    if (too_close) {
-        target_speed = lane_infos[lane].front_car_speed;
-        if (right_lane_free)
-        {
-            lane+=1;
-            std::cout << "Change Lane Right" << std::endl;
-            target_speed = MAX_SPEED;
-        }
-        else if (left_lane_free)
-        {
-            lane-=1;
-            std::cout << "Change Lane Left!!" << std::endl;
-            target_speed = MAX_SPEED;
+    //std::cout << lane << ": " << too_close << " " << left_lane_free << " " << right_lane_free << std::endl;
+ 
+    // State transition logic   
+    if(too_close) {
+        if(right_lane_free && left_lane_free) {
+            if(lane_infos[RIGHT_LANE].front_car_distance >= lane_infos[LEFT_LANE].front_car_distance) {
+                next_state_ = CHANGE_LANE_RIGHT;
+            } else {
+                next_state_ = CHANGE_LANE_LEFT;
+            }
+        } else if(right_lane_free){
+            next_state_ = CHANGE_LANE_RIGHT;
+        } else if(left_lane_free) {
+            next_state_ = CHANGE_LANE_LEFT;
         } else {
-            std::cout << "Can't change lane" << std::endl;
+            next_state_ = PREPARE_CHANGE_LANE;
         }
     } else {
-        target_speed = MAX_SPEED;
-        std::cout << "Keep Lane" << std::endl;
+        next_state_ = KEEP_LANE;
     }
 
-    // Create Sparse Points for creating spline
+    switch (next_state_) {
+        case KEEP_LANE:
+            target_vel = MAX_SPEED;
+            std::cout << "Keep going at Lane #" << lane << std::endl;
+            break;
+        case PREPARE_CHANGE_LANE:
+            // Keep same speed with the front car
+            target_vel = target_vel = lane_infos[lane].front_car_speed; 
+            std::cout << "Looking to change lane... " << std::endl;
+            break;
+        case CHANGE_LANE_LEFT:
+            lane--;
+            target_vel = MAX_SPEED;
+            std::cout << "Changing to left Lane #" << lane << std::endl;
+            break;
+        case CHANGE_LANE_RIGHT:
+            lane++;
+            target_vel = MAX_SPEED;
+            std::cout << "Changing to right Lane #" << lane << std::endl;
+            break;
+        default:
+            break;
+    }
+
+    // Create Sparse Points for creating spline (Points are in car coordinate)
     vector<vector<double>> anchor_pts = CalcAnchorPoints();
-
-    // Transform coordinates to ego car's local coordinate system before creating spline
-    for (int i = 0; i < anchor_pts[0].size(); i++ ) 
-    { 
-        double shift_x = anchor_pts[0][i]-car_state_.ref_x;
-        double shift_y = anchor_pts[1][i]-car_state_.ref_y; 
-
-        anchor_pts[0][i] = (shift_x *cos(0-car_state_.ref_yaw) - shift_y*sin(0-car_state_.ref_yaw));
-        anchor_pts[1][i] = (shift_x *sin(0-car_state_.ref_yaw) + shift_y*cos(0-car_state_.ref_yaw));
-    }
 
     // Create a spline using 5 anchor points
     tk::spline s;
     s.set_points(anchor_pts[0], anchor_pts[1]);
 
+    int prev_size = car_state_.previous_path_x.size();
+    int n_remaining_pts = N_PATH_POINTS - prev_size;
+    
     // Add remaining points from previous path to new path
-    for (int i=1; i<car_state_.previous_path_x.size(); i++)
-    {
+    for (int i=0; i<prev_size; i++) {
         next_x_vals.push_back(car_state_.previous_path_x[i]);
         next_y_vals.push_back(car_state_.previous_path_y[i]);
     } 
 
     // Fill the remainder of the new path by interpolating using spline
-    double target_x = 30.0; 
+    double target_x = TIME_STEP * N_PATH_POINTS * MAX_SPEED;
     double target_y = s(target_x);
     double target_dist = sqrt((target_x)*(target_x)+(target_y)*(target_y)); 
-    double target_x_ratio = target_x / target_dist;
-    
-    double x_local = 0.0;
-    double y_local;
-    for (int i=1; i<=(N_PATH_POINTS - car_state_.previous_path_x.size()); i++)
-    { 
-        if ( ref_speed > target_speed || lane_infos[lane].front_car_distance < FRONT_CLEARANCE_DIST/2 )
-        {
-            ref_speed -= 0.1;  //[m/s] equivalent to acceleration of -5 [m/s^2]
-        }
-        else if ( ref_speed < target_speed )
-        {
-            ref_speed += 0.15;  //[m/s] equivalent to acceleration of 5 [m/s^2]
-        }
-        ref_speed = std::max(0.00001,ref_speed);   // prevents from going backwards
+    // Ratio/projedction of x_shift vs total distance 
+    double target_x_ratio = target_x / target_dist;    
+    double prev_x = 0.0;
 
-        double N = (target_dist/(0.02*ref_speed)); // spacing between points on line so that car travels at ref_speed as simulator has no controller
-        double ddist = TIME_STEP * ref_speed; //
-        x_local = x_local + ddist * target_x_ratio; 
-        y_local = s(x_local); // y coordinate determined from spline function s(x)
+    for(int i=0; i<n_remaining_pts; i++) { 
+        if(ref_vel > target_vel || lane_infos[lane].front_car_distance < FRONT_CLEARANCE_DIST/2) {
+            ref_vel -= MAX_VEL_CHANGE_PER_STEP;
+        } else if(ref_vel < target_vel) {
+            ref_vel += MAX_VEL_CHANGE_PER_STEP;
+        }
+
+        double x_point = prev_x + TIME_STEP * ref_vel * target_x_ratio ; 
+        double y_point = s(x_point); 
+        prev_x = x_point;
         
-        // Recall we are in car (local) coordinates, need to convert back to global (map) coordinates. 
-        double x_map = x_local*cos(car_state_.ref_yaw) - y_local*sin(car_state_.ref_yaw) + car_state_.ref_x; //rotate back to map
-        double y_map = x_local*sin(car_state_.ref_yaw) + y_local*cos(car_state_.ref_yaw) + car_state_.ref_y; 
+        auto map_pts = ConvertToMapCoordinate(x_point, y_point);
 
-        // update next vals for simulator
-        next_x_vals.push_back(x_map);
-        next_y_vals.push_back(y_map); 
+        next_x_vals.push_back(map_pts[0]);
+        next_y_vals.push_back(map_pts[1]); 
     }
+}
+
+vector<double> PathPlanner::ConvertToMapCoordinate(double x, double y) {
+    // Convert from car's local coordinate to map coordinate
+    double x_map = x * cos(car_state_.ref_yaw) - y * sin(car_state_.ref_yaw) + car_state_.ref_x; 
+    double y_map = x * sin(car_state_.ref_yaw) + y * cos(car_state_.ref_yaw) + car_state_.ref_y; 
+    return {x_map, y_map};
+}
+
+vector<double> PathPlanner::ConvertToCarCoordinate(double x, double y) {
+    // Convert from map coordinate to car's local coordinate
+    double shift_x = x - car_state_.ref_x;
+    double shift_y = y - car_state_.ref_y; 
+
+    double car_x = (shift_x *cos(0-car_state_.ref_yaw) - shift_y*sin(0-car_state_.ref_yaw));
+    double car_y = (shift_x *sin(0-car_state_.ref_yaw) + shift_y*cos(0-car_state_.ref_yaw));
+    return {car_x, car_y};
 }
 
 void PathPlanner::SetMap(vector<double>& x, vector<double>& y, vector<double>& s, vector<double>& dx, vector<double>& dy) {

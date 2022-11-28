@@ -71,7 +71,7 @@ public:
     virtual ~PathPlanner() {};
 
     // Update next path
-    void Update(json j);
+    void UpdatePath(json j);
    
     // Load map waypoints info
     void SetMap(vector<double>& x, vector<double>& y, vector<double>& s, vector<double>& dx, vector<double>& dy);
@@ -81,26 +81,32 @@ public:
 
 private:
 
-    // Max target speed in meter/second
-    static constexpr double MAX_SPEED = 49.5 * MPH_TO_MS;
-
-    // Safe distance to the front car in meter
-    static constexpr double FRONT_CLEARANCE_DIST = 50;
-
-    // Safe distance to the back car in meter
-    static constexpr double BACK_CLEARANCE_DIST = 15;
+    // Number of waypoints to consider in path planning
+    static constexpr int N_PATH_POINTS = 50;
 
     // One time step for simulation is 20ms
     static constexpr double TIME_STEP = 0.02;
-
-    // One time step for simulation is 20ms
-    static constexpr int N_PATH_POINTS = 50;
 
     // Number of lanes
     static constexpr int N_LANES = 3;
 
     // Lane width in meter
     static constexpr double LANE_WIDTH = 4.0;
+
+    // Max speed in meter/second
+    static constexpr double MAX_SPEED = 49.5 * MPH_TO_MS;
+
+    // Max accelration in meter/second^2
+    static constexpr double MAX_ACCELERATION = 8;
+
+    // Max velocity change in one step(20ms)
+    static constexpr double MAX_VEL_CHANGE_PER_STEP = MAX_ACCELERATION * TIME_STEP;
+
+    // Safe distance to the front car in meter
+    static constexpr double FRONT_CLEARANCE_DIST = 40;
+
+    // Safe distance to the back car in meter
+    static constexpr double BACK_CLEARANCE_DIST = 15;
     
     // Current Lane ID
     int lane;
@@ -108,11 +114,12 @@ private:
     // Lanes' informations
     vector<Lane> lane_infos;
 
-    // Current speed of the car
-    double ref_speed;
+    // Current velocity of the car
+    double ref_vel;
 
-    // Target speed that want to achieve
-    double target_speed;
+    // Target velocity we want to achieve 
+    // Always MAX_SPEED unless when we follow the car in front
+    double target_vel;
 
     // Map waypoints
     vector<double> map_waypoints_x;
@@ -141,6 +148,12 @@ private:
 
     // Get Lane ID(0/1/2) given Frenet d coordinate
     int GetLaneID(double d_cooord);
+
+    // Convert Point in Car's local coordinate to Map coordinate
+    vector<double> ConvertToMapCoordinate(double x, double y);
+
+    // Convert Point in Map coordinate to Car's local coordinate
+    vector<double> ConvertToCarCoordinate(double x, double y);
 };
 
 #endif

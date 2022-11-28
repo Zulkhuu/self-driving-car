@@ -76,7 +76,7 @@ int main() {
         if (event == "telemetry") {
           // j[1] is the data JSON object
           
-          planner.Update(j[1]);
+          planner.UpdatePath(j[1]);
 
           json msgJson;
           msgJson["next_x"] = planner.next_x_vals;
