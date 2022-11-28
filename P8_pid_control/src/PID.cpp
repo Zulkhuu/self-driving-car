@@ -17,6 +17,11 @@ void PID::Init(double Kp_, double Ki_, double Kd_) {
   Kp = Kp_;
   Ki = Ki_;
   Kd = Kd_;
+
+  d_error = 0;
+  p_error = 0;  
+  i_error = 0;
+
 }
 
 void PID::UpdateError(double cte) {
@@ -25,10 +30,8 @@ void PID::UpdateError(double cte) {
    */
 
   d_error = (cte - p_error);
-  
-  p_error = cte;
-  
   i_error += cte;
+  p_error = cte;  
 
   std::cout << "\tPe:" << p_error 
             << "\tIe:" << i_error
