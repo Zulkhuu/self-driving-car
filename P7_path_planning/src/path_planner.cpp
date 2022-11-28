@@ -119,8 +119,8 @@ vector<vector<double>> PathPlanner::CalcAnchorPoints() {
         car_state_.ref_s = car_state_.s; 
         car_state_.ref_yaw = deg2rad(car_state_.yaw);
 
-        prev_ref_x = car_state_.ref_x - cos(car_state_.yaw);
-        prev_ref_y = car_state_.ref_y - sin(car_state_.yaw); 
+        prev_ref_x = car_state_.ref_x - cos(car_state_.ref_yaw);
+        prev_ref_y = car_state_.ref_y - sin(car_state_.ref_yaw); 
 
     } else { 
         // Use the previous path's end point as starting reference

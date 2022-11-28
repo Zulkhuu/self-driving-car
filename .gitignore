@@ -134,4 +134,4 @@ quiz/
 # Examples
 */examples/
 
-*.vs_code/*
+*/.vs_code
