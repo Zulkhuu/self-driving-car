@@ -133,3 +133,5 @@ quiz/
 
 # Examples
 */examples/
+
+*.vs_code/*
