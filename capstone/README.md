@@ -1,6 +1,6 @@
 ## Project: System Integration
 
-This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project.
+This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. 
 
 ![](imgs/sys_int_project.png)
 
