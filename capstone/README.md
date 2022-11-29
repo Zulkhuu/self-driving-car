@@ -47,12 +47,12 @@ To set up port forwarding, please refer to the "uWebSocketIO Starter Guide" foun
 
 1. Clone the project repository
 ```bash
-git clone https://github.com/udacity/CarND-Capstone.git
+git clone https://github.com/Zulkhuu/self-driving-car
 ```
 
 2. Install python dependencies
 ```bash
-cd CarND-Capstone
+cd self-driving-car/capstone
 pip install -r requirements.txt
 ```
 3. Make and run styx
