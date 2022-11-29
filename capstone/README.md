@@ -1,12 +1,3 @@
-# Deprecated Repository
-Udacity has launched a newer version of the associated Nanodegree program **[Self-Driving Car Engineer](https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd0013)**; as a result, the current repository is deprecated. We are no longer maintaining this repository and going to archive it. However, learners will be able to fork it to their personal Github account but cannot submit PRs to this repository. If you have any issues or suggestions to make, feel free to:
-- Utilize the https://knowledge.udacity.com/ forum to seek help on content-specific issues.
-- Submit a support ticket along with the link to your forked repository if (learners are) blocked for other reasons. You can find the link to file a support ticket in your classroom home.
-
----
-
-This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
-
 Please use **one** of the two installation options, either native **or** docker installation.
 
 ### Native Installation
@@ -37,6 +28,17 @@ Run the docker file
 ```bash
 docker run -p 4567:4567 -v $PWD:/capstone -v /tmp/log:/root/.ros/ --rm -it capstone
 ```
+
+Following runtime error was occuring during roslaunch in my case.
+```
+ValueError: greenlet.greenlet size changed, may indicate binary incompatibility. Expected 128 from C header, got 40 from PyObject
+```
+
+This issue can be solved by reinstalling greenlet library's older version 
+```
+pip install --force-reinstall greenlet==0.4.12
+```
+
 
 ### Port Forwarding
 To set up port forwarding, please refer to the "uWebSocketIO Starter Guide" found in the classroom (see Extended Kalman Filter Project lesson).
