@@ -91,7 +91,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(libwaypoint_follower lib/libwaypoint_follower.cpp)
+add_library(libwaypoint_follower src/libwaypoint_follower.cpp)
 add_dependencies(libwaypoint_follower
 styx_msgs_generate_messages_cpp)
 
