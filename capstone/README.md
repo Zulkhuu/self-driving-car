@@ -4,6 +4,9 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 
 ![](imgs/sys_int_project.png)
 
+The project consists of various ROS nodes running and is able to work with Unity-based simulator or real car.
+
+![](imgs/sys_block.png)
 
 Please use **one** of the two installation options, either native **or** docker installation.
 
